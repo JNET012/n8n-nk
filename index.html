@@ -1,61 +1,51 @@
 <html lang="en">
-
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- ensures mobile scaling -->
+  <title>Chat Widget Test</title>
+  <style>
+    /* Basic responsive adjustments */
+    .chat-widget-container {
+      max-width: 100%;
+      width: 350px; /* default width for desktop */
+    }
 
-<meta charset="UTF-8">
-
-<title>Chat Widget Test</title>
-
+    @media (max-width: 600px) {
+      .chat-widget-container {
+        width: 100% !important; /* full width on small screens */
+        right: 0 !important;
+        left: 0 !important;
+        border-radius: 0 !important; /* remove rounded corners for mobile */
+      }
+    }
+  </style>
 </head>
 
 <body>
-
 <script>
-
 window.ChatWidgetConfig = {
-
-webhook: {
-
-url: 'https://jnet012.app.n8n.cloud/webhook/f6cdfb77-c13b-439a-899e-20f174463cba/chat',
-
-route: 'general'
-},
-
-branding: {
-
-logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_RTXY-0AHSsQQoefNPiCM15cavYHiXmawDg&s',
-
-name: 'NK Teamwear',
-welcomeText: 'Hi 👋, how can we help?', //Welcome message
-responseTimeText: 'We typically respond right away' //Response time message
-
-
-},
-
-style: {
-
-primaryColor: '#54dde4',
-
-secondaryColor: '#172565',
-
-position: 'right',
-
-backgroundColor: '#ffffff',
-
-fontColor: '#333333'
-
-}
-
+  webhook: {
+    url: 'https://jnet012.app.n8n.cloud/webhook/f6cdfb77-c13b-439a-899e-20f174463cba/chat',
+    route: 'general'
+  },
+  branding: {
+    logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_RTXY-0AHSsQQoefNPiCM15cavYHiXmawDg&s',
+    name: 'NK Teamwear',
+    welcomeText: 'Hi 👋, how can we help?', //Welcome message
+    responseTimeText: 'We typically respond right away' //Response time message
+  },
+  style: {
+    primaryColor: '#54dde4',
+    secondaryColor: '#172565',
+    position: 'right',
+    backgroundColor: '#ffffff',
+    fontColor: '#333333'
+  }
 };
 
 const script = document.createElement('script');
-
 script.src = 'https://cdn.jsdelivr.net/gh/WayneSimpson/n8n-chatbot-template@ba944c3/chat-widget.js';
-
 document.body.appendChild(script);
-
 </script>
-
 </body>
-
 </html>

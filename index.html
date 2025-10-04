@@ -1,27 +1,361 @@
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- ensures mobile scaling -->
-  <title>Chat Widget Test</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Teamwear Shop — Mock</title>
   <style>
-    /* Basic responsive adjustments */
-    .chat-widget-container {
-      max-width: 100%;
-      width: 350px; /* default width for desktop */
+    :root{
+      --bg:#0b0d12;          /* header/footer dark */
+      --bg-2:#121520;        /* sections dark */
+      --text:#101219;        /* body text */
+      --muted:#6b7280;       /* muted text */
+      --brand:#2fb67c;       /* accent */
+      --brand-2:#1c9c6a;     /* accent hover */
+      --card:#ffffff;        /* cards */
+      --chip:#eef2ff;        /* small badges */
+      --ring:rgba(47,182,124,.35);
     }
+    *{box-sizing:border-box}
+    body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;color:var(--text);background:#f7f8fb}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .container{max-width:1200px;margin:0 auto;padding:0 1rem}
+    /* Top info bar */
+    .topbar{background:var(--bg);color:#cbd5e1;font-size:.9rem}
+    .topbar .row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;justify-content:space-between;padding:.5rem 0}
+    .topbar a{color:#e5e7eb}
+    .pill{display:inline-flex;gap:.5rem;align-items:center;padding:.25rem .6rem;border-radius:999px;background:#111827;color:#cbd5e1;border:1px solid #1f2937}
 
-    @media (max-width: 600px) {
-      .chat-widget-container {
-        width: 100% !important; /* full width on small screens */
-        right: 0 !important;
-        left: 0 !important;
-        border-radius: 0 !important; /* remove rounded corners for mobile */
-      }
+    /* Header */
+    header{background:#0e111a;border-bottom:1px solid #111827}
+    .brand{display:flex;align-items:center;gap:.75rem;color:#fff;font-weight:700;letter-spacing:.3px}
+    .brand .logo{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--brand),#6ee7b7);box-shadow:0 0 0 2px #0e111a,0 10px 25px rgba(0,0,0,.35)}
+    nav{display:flex;gap:1rem;flex-wrap:wrap}
+    nav a{color:#e5e7eb;padding:.65rem .8rem;border-radius:.6rem}
+    nav a:hover{background:#111827}
+    .header-row{display:flex;align-items:center;justify-content:space-between;padding:1rem 0}
+    .search{position:relative;flex:1;max-width:420px;margin:0 1rem}
+    .search input{width:100%;padding:.75rem 2.5rem .75rem .9rem;border-radius:.7rem;border:1px solid #1f2937;background:#0b0f19;color:#e5e7eb}
+    .search .icon{position:absolute;right:.6rem;top:50%;transform:translateY(-50%);opacity:.6}
+
+    /* Hero */
+    .hero{background:radial-gradient(1200px 400px at 50% -100px, rgba(47,182,124,.25), transparent 60%), linear-gradient(180deg,#0e111a 0%, #121520 60%, #121520 100%);color:#fff}
+    .hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:2rem;align-items:center;padding:3rem 0}
+    .hero h1{font-size:clamp(1.8rem,4vw,3rem);line-height:1.1;margin:.25rem 0}
+    .kpis{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0}
+    .kpis .chip{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);padding:.45rem .6rem;border-radius:.6rem;color:#e5e7eb}
+    .cta{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem}
+    .btn{display:inline-flex;align-items:center;gap:.5rem;background:var(--brand);color:#052018;border:0;border-radius:.8rem;padding:.8rem 1rem;font-weight:600;box-shadow:0 8px 20px var(--ring);}
+    .btn:hover{background:var(--brand-2)}
+    .btn.secondary{background:transparent;color:#e5e7eb;border:1px solid #1f2937}
+
+    /* Product grid */
+    .section{padding:2rem 0}
+    .section h2{font-size:1.5rem;margin:0 0 1rem}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+    @media (max-width:1000px){.grid{grid-template-columns:repeat(3,1fr)}}
+    @media (max-width:700px){.grid{grid-template-columns:repeat(2,1fr)} .hero .wrap{grid-template-columns:1fr}}
+    .card{background:var(--card);border:1px solid #e5e7eb;border-radius:1rem;overflow:hidden;display:flex;flex-direction:column}
+    .card .thumb{aspect-ratio:4/3;background:#eef2ff}
+    .card h3{font-size:1rem;margin:.6rem .9rem 0}
+    .price{color:#111827;font-weight:700;margin:.25rem .9rem .75rem}
+    .actions{margin:auto .9rem .9rem;display:flex;gap:.5rem}
+    .chip{display:inline-flex;align-items:center;gap:.35rem;padding:.25rem .5rem;border-radius:.5rem;background:var(--chip);font-size:.8rem;color:#3730a3}
+
+    /* Brand strip */
+    .brands{display:grid;grid-template-columns:repeat(6,1fr);gap:1rem;opacity:.85}
+    @media (max-width:800px){.brands{grid-template-columns:repeat(3,1fr)}}
+    .brands .b{background:#fff;border:1px solid #e5e7eb;border-radius:.75rem;padding:1rem;display:flex;align-items:center;justify-content:center;height:64px}
+
+    /* Footer */
+    footer{background:var(--bg);color:#cbd5e1;margin-top:2rem}
+    .foot{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2rem;padding:2rem 0;border-top:1px solid #111827}
+    @media (max-width:900px){.foot{grid-template-columns:1fr 1fr}}
+    .foot h4{margin:0 0 .6rem;color:#fff}
+    .foot a{display:block;padding:.25rem 0;color:#cbd5e1}
+
+    /* Floating chatbot */
+    .chat-launcher{position:fixed;right:20px;bottom:20px;background:var(--brand);border:none;border-radius:999px;width:56px;height:56px;display:grid;place-items:center;box-shadow:0 14px 30px var(--ring);cursor:pointer}
+    .chat-panel{position:fixed;right:20px;bottom:92px;width:min(420px,92vw);height:520px;display:none;grid-template-rows:auto 1fr auto;background:#0f1420;border:1px solid #1f2937;border-radius:1rem;box-shadow:0 20px 60px rgba(0,0,0,.45);overflow:hidden}
+    .chat-panel.open{display:grid}
+    .chat-header{display:flex;align-items:center;justify-content:space-between;padding:.8rem 1rem;background:#0b0f19;color:#fff}
+    .chat-title{display:flex;align-items:center;gap:.6rem}
+    .chat-title .dot{width:10px;height:10px;border-radius:999px;background:var(--brand);box-shadow:0 0 0 4px rgba(47,182,124,.15)}
+    .chat-log{padding:1rem;overflow:auto;display:flex;flex-direction:column;gap:.6rem;background:linear-gradient(180deg,#0f1420 0,#0f1420 60%,#0b0f19)}
+    .msg{max-width:80%;padding:.6rem .75rem;border-radius:.75rem;color:#e5e7eb}
+    .msg.bot{align-self:flex-start;background:#0b0f19;border:1px solid #1f2937}
+    .msg.user{align-self:flex-end;background:#1b2a3b;border:1px solid #243447}
+    .chat-input{display:flex;gap:.6rem;padding:1rem;background:#0b0f19;border-top:1px solid #1f2937}
+    .chat-input input{flex:1;padding:.7rem .9rem;border-radius:.6rem;border:1px solid #243447;background:#0f1420;color:#e5e7eb}
+    .chat-input button{padding:.7rem 1rem;border-radius:.6rem;border:1px solid #1f2937;background:#162130;color:#e5e7eb}
+    .chat-input button:hover{background:#1c2a3d}
+    .sr-only{position:absolute;left:-9999px}
+  
+    /* Third‑party Chat Widget overrides */
+    .chat-widget-container { max-width:100%; width:350px; }
+    @media (max-width: 600px){
+      .chat-widget-container{ width:100% !important; right:0 !important; left:0 !important; border-radius:0 !important; }
     }
+    /* Hide built‑in demo chat when external widget is enabled */
+    .chat-launcher, .chat-panel{ display:none !important; }
   </style>
 </head>
-
 <body>
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="container row">
+      <div class="row" style="gap:1rem">
+        <span class="pill">📞 Help & sales: <a href="tel:+44000000000">01934 246460</a></span>
+        <span class="pill">✉️ <a href="mailto:teamwear@example.com">teamwear@example.com</a></span>
+      </div>
+      <div class="row" style="gap:.5rem;align-items:center">
+        <span class="pill">🚚 Free next day delivery over £75</span>
+        <span class="pill">🔒 Secure payments</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="container header-row">
+      <a class="brand" href="#">
+        <div class="logo" aria-hidden="true"></div>
+        <span>Teamwear Shop (Mock)</span>
+      </a>
+      <div class="search" role="search">
+        <input type="search" placeholder="Search products, clubs, brands…" aria-label="Search" />
+        <span class="icon">🔎</span>
+      </div>
+      <nav aria-label="Primary">
+        <a href="#clubs">Club Shops</a>
+        <a href="#education">Education Shops</a>
+        <a href="#brands">Brands</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container wrap">
+      <div>
+        <div class="kpis">
+          <span class="chip">Your Team. Your Sport. Our Passion.</span>
+          <span class="chip">20+ years experience</span>
+        </div>
+        <h1>Premium custom teamwear — from training to matchday</h1>
+        <p style="color:#cbd5e1;max-width:60ch">This is a <strong>non‑commercial mock</strong> of a sports teamwear storefront built for <em>chatbot testing</em>. Use it to validate UI placement, message flows, and integrations without relying on a live production site.
+        </p>
+        <div class="cta">
+          <a class="btn" href="#products">Shop popular items</a>
+          <a class="btn secondary" href="#brands">Browse brands</a>
+        </div>
+      </div>
+      <div>
+        <img alt="Athletes in custom kit" src="https://picsum.photos/seed/teamwear/900/600" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured products -->
+  <section id="products" class="section container">
+    <h2>Featured products</h2>
+    <div class="grid" role="list">
+      <!-- Repeatable product card template -->
+      <article class="card" role="listitem">
+        <img class="thumb" src="https://picsum.photos/seed/tee/600/450" alt="Tech Tee" />
+        <h3>Tech Training Tee</h3>
+        <p class="price">£20.80</p>
+        <div class="actions">
+          <span class="chip">Quick view</span>
+          <span class="chip">Choose options</span>
+        </div>
+      </article>
+      <article class="card" role="listitem">
+        <img class="thumb" src="https://picsum.photos/seed/quarterzip/600/450" alt="Quarter Zip" />
+        <h3>1/4 Zip Midlayer</h3>
+        <p class="price">£36.40</p>
+        <div class="actions">
+          <span class="chip">Quick view</span>
+          <span class="chip">Choose options</span>
+        </div>
+      </article>
+      <article class="card" role="listitem">
+        <img class="thumb" src="https://picsum.photos/seed/hoodie/600/450" alt="Hoody" />
+        <h3>Staff Training Hoody</h3>
+        <p class="price">£29.99</p>
+        <div class="actions">
+          <span class="chip">Quick view</span>
+          <span class="chip">Choose options</span>
+        </div>
+      </article>
+      <article class="card" role="listitem">
+        <img class="thumb" src="https://picsum.photos/seed/socks/600/450" alt="Socks" />
+        <h3>Grip Socks (3 Pack)</h3>
+        <p class="price">£11.99</p>
+        <div class="actions">
+          <span class="chip">Add to cart</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Categories -->
+  <section id="clubs" class="section" style="background:#f0f2f8">
+    <div class="container">
+      <h2>Shop by category</h2>
+      <div class="grid">
+        <article class="card">
+          <img class="thumb" src="https://picsum.photos/seed/rugby/600/450" alt="Club shops" />
+          <h3>Club Shops</h3>
+          <p class="price" style="opacity:.7">Rugby • Football • Netball • More</p>
+        </article>
+        <article class="card">
+          <img class="thumb" src="https://picsum.photos/seed/school/600/450" alt="Education" />
+          <h3>Education Shops</h3>
+          <p class="price" style="opacity:.7">Schools • Colleges • PE</p>
+        </article>
+        <article class="card">
+          <img class="thumb" src="https://picsum.photos/seed/accessories/600/450" alt="Accessories" />
+          <h3>Accessories</h3>
+          <p class="price" style="opacity:.7">Bags • Hats • Socks</p>
+        </article>
+        <article class="card">
+          <img class="thumb" src="https://picsum.photos/seed/printing/600/450" alt="Services" />
+          <h3>Printing & Embroidery</h3>
+          <p class="price" style="opacity:.7">In‑house customisation</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brands strip -->
+  <section id="brands" class="section container">
+    <h2>Brands we support</h2>
+    <div class="brands" aria-label="Brand logos">
+      <div class="b">Adidas</div>
+      <div class="b">Joma</div>
+      <div class="b">Umbro</div>
+      <div class="b">Erreà</div>
+      <div class="b">Uhlsport</div>
+      <div class="b">Canterbury</div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="contact">
+    <div class="container foot">
+      <div>
+        <h4>About</h4>
+        <p>Mock storefront used for chatbot UX testing. No real orders are processed.</p>
+      </div>
+      <div>
+        <h4>Useful Links</h4>
+        <a href="#clubs">Club Shops</a>
+        <a href="#education">Education Shops</a>
+        <a href="#brands">Our Brands</a>
+        <a href="#about">About Us</a>
+      </div>
+      <div>
+        <h4>Customer Service</h4>
+        <a href="#">Delivery Information</a>
+        <a href="#">Refund Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <a href="mailto:teamwear@example.com">teamwear@example.com</a>
+        <a href="tel:+44000000000">01934 246460</a>
+        <div style="margin-top:.5rem;opacity:.75">© 2025 Mock Store</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating Chatbot: simple no-backend demo -->
+  <button class="chat-launcher" id="chat-launcher" aria-label="Open chat">
+    💬
+  </button>
+  <section class="chat-panel" id="chat-panel" aria-live="polite" aria-label="Chatbot dialog">
+    <div class="chat-header">
+      <div class="chat-title"><span class="dot"></span><strong>Teamwear Assistant</strong></div>
+      <button id="chat-close" title="Close" style="background:transparent;border:0;color:#e5e7eb;font-size:1.2rem">✕</button>
+    </div>
+    <div class="chat-log" id="chat-log">
+      <div class="msg bot">Hi! I’m here to help. Ask about products, sizing, delivery, or try a refund flow.</div>
+    </div>
+    <form class="chat-input" id="chat-form">
+      <label for="chat-input" class="sr-only">Message</label>
+      <input id="chat-text" autocomplete="off" placeholder="Type a message…" />
+      <button type="submit">Send</button>
+    </form>
+  </section>
+
+  <script>
+    // Minimal demo bot with a pluggable send function.
+    const panel = document.getElementById('chat-panel');
+    const launcher = document.getElementById('chat-launcher');
+    const closer = document.getElementById('chat-close');
+    const log = document.getElementById('chat-log');
+    const form = document.getElementById('chat-form');
+    const input = document.getElementById('chat-text');
+
+    function toggleChat(open){
+      panel.classList[open ? 'add' : 'remove']('open');
+      if(open) setTimeout(()=>input.focus(), 50);
+    }
+    launcher.addEventListener('click', ()=>toggleChat(true));
+    closer.addEventListener('click', ()=>toggleChat(false));
+
+    function push(role, text){
+      const div = document.createElement('div');
+      div.className = 'msg ' + role;
+      div.textContent = text;
+      log.appendChild(div);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    // Replace this with your own chatbot API call
+    async function sendToChatbot(message){
+      // Example: POST to your endpoint
+      // const res = await fetch('https://your-bot-endpoint/chat', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({message})});
+      // const data = await res.json();
+      // return data.reply;
+
+      // Demo logic for now: echo + a couple of scripted answers
+      const lower = message.toLowerCase();
+      if(lower.includes('delivery')) return 'We offer next‑day delivery on orders over £75 in this demo.';
+      if(lower.includes('refund')) return 'Refunds in this mock are simulated. Try: "start refund for order #12345"';
+      if(lower.includes('size')) return 'Each product has a size guide. In this mock, sizes are S–XXL.';
+      return 'You said: ' + message + ' — (replace with real bot response)';
+    }
+
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const text = input.value.trim();
+      if(!text) return;
+      push('user', text);
+      input.value = '';
+      const thinking = document.createElement('div');
+      thinking.className = 'msg bot';
+      thinking.textContent = '…';
+      log.appendChild(thinking); log.scrollTop = log.scrollHeight;
+      try{
+        const reply = await sendToChatbot(text);
+        thinking.remove();
+        push('bot', reply);
+      }catch(err){
+        thinking.remove();
+        push('bot', 'Sorry — the demo chatbot endpoint is not configured.');
+      }
+    });
+
+    // Allow opening chat via URL hash: #chat
+    if(location.hash === '#chat') toggleChat(true);
+  </script>
+  
+<!-- Third‑party Chat Widget: NK Teamwear / n8n -->
 <script>
 window.ChatWidgetConfig = {
   webhook: {
@@ -29,10 +363,10 @@ window.ChatWidgetConfig = {
     route: 'general'
   },
   branding: {
-    logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_RTXY-0AHSsQQoefNPiCM15cavYHiXmawDg&s',
+    logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXXOVVRHlwu2Et-z9EyVBImciBJwFps2oW_g&s',
     name: 'NK Teamwear',
-    welcomeText: 'Hi 👋, how can we help?', //Welcome message
-    responseTimeText: 'We typically respond right away' //Response time message
+    welcomeText: 'Hi 👋, how can we help?',
+    responseTimeText: 'We typically respond right away'
   },
   style: {
     primaryColor: '#54dde4',
@@ -45,7 +379,9 @@ window.ChatWidgetConfig = {
 
 const script = document.createElement('script');
 script.src = 'https://cdn.jsdelivr.net/gh/WayneSimpson/n8n-chatbot-template@ba944c3/chat-widget.js';
-document.body.appendChild(script);
+script.defer = true;
+// If your site uses a strict Content-Security-Policy, allow this CDN and "unsafe-inline" for this demo.
+(document.body || document.documentElement).appendChild(script);
 </script>
 </body>
 </html>
